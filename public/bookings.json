@@ -19,7 +19,7 @@
         "roomType": "Penthouse",
         "checkIn": "2026-01-01",
         "checkOut": "2026-01-03",
-        "guests": 2,
+        "guests": 6,
         "totalAmount": 44000,
         "currency": "INR",
         "status": "confirmed",

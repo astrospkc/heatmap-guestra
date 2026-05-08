@@ -1,5 +1,3 @@
-// Role type
-export type Role = 'admin' | 'guest';
 
 // Booking data type
 export interface Booking {

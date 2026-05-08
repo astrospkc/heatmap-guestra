@@ -2,9 +2,7 @@ import React from 'react';
 import type { Booking, SelectionRange } from '../../types';
 import {
   getAvailableRooms,
-  getOverlappingBookings,
   formatDisplay,
-  nightsBetween,
 } from '../../utils/dateUtils';
 
 interface GuestPanelProps {
@@ -15,16 +13,16 @@ interface GuestPanelProps {
 const ALL_ROOMS = ['101', '102', '103', '201', '202', '203', '301', '302', '401', '402'];
 
 const ROOM_META: Record<string, { type: string; icon: string; floor: string }> = {
-  '101': { type: 'Standard',   icon: '🛏',  floor: '1st Floor' },
-  '102': { type: 'Standard',   icon: '🛏',  floor: '1st Floor' },
-  '103': { type: 'Deluxe',     icon: '🛎',  floor: '1st Floor' },
-  '201': { type: 'Deluxe',     icon: '🛎',  floor: '2nd Floor' },
-  '202': { type: 'Deluxe',     icon: '🛎',  floor: '2nd Floor' },
-  '203': { type: 'Suite',      icon: '✨',  floor: '2nd Floor' },
-  '301': { type: 'Suite',      icon: '✨',  floor: '3rd Floor' },
-  '302': { type: 'Suite',      icon: '✨',  floor: '3rd Floor' },
-  '401': { type: 'Penthouse',  icon: '🏙',  floor: 'Top Floor' },
-  '402': { type: 'Penthouse',  icon: '🏙',  floor: 'Top Floor' },
+  '101': { type: 'Standard', icon: '🛏', floor: '1st Floor' },
+  '102': { type: 'Standard', icon: '🛏', floor: '1st Floor' },
+  '103': { type: 'Deluxe', icon: '🛎', floor: '1st Floor' },
+  '201': { type: 'Deluxe', icon: '🛎', floor: '2nd Floor' },
+  '202': { type: 'Deluxe', icon: '🛎', floor: '2nd Floor' },
+  '203': { type: 'Suite', icon: '✨', floor: '2nd Floor' },
+  '301': { type: 'Suite', icon: '✨', floor: '3rd Floor' },
+  '302': { type: 'Suite', icon: '✨', floor: '3rd Floor' },
+  '401': { type: 'Penthouse', icon: '🏙', floor: 'Top Floor' },
+  '402': { type: 'Penthouse', icon: '🏙', floor: 'Top Floor' },
 };
 
 export const GuestPanel: React.FC<GuestPanelProps> = ({ bookings, selection }) => {
@@ -39,10 +37,10 @@ export const GuestPanel: React.FC<GuestPanelProps> = ({ bookings, selection }) =
   }
 
   const availableRooms = getAvailableRooms(bookings, selection.start, selection.end);
-  const occupiedRooms  = ALL_ROOMS.filter((r) => !availableRooms.includes(r));
+  const occupiedRooms = ALL_ROOMS.filter((r) => !availableRooms.includes(r));
 
   const isSingleDay = selection.start.getTime() === selection.end.getTime();
-  const dateLabel   = isSingleDay
+  const dateLabel = isSingleDay
     ? formatDisplay(selection.start)
     : `${formatDisplay(selection.start)} – ${formatDisplay(selection.end)}`;
   const nights = isSingleDay

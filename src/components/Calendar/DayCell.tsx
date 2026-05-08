@@ -1,5 +1,5 @@
 import React from 'react';
-import type { Booking, Role } from '../../types';
+import type { Booking } from '../../types';
 import {
   getHeatmapColor,
   bookingOccupiesNight,
@@ -15,7 +15,6 @@ interface DayCellProps {
   isSelected: boolean;
   isDragStart: boolean;
   isToday: boolean;
-  role: Role;
   onMouseDown: (date: Date) => void;
   onMouseEnter: (date: Date) => void;
   onMouseUp: () => void;
@@ -30,13 +29,11 @@ export const DayCell: React.FC<DayCellProps> = ({
   isSelected,
   isDragStart,
   isToday,
-  role,
   onMouseDown,
   onMouseEnter,
   onMouseUp,
   onHover,
 }) => {
-  const isGuest = role === 'guest';
   const heatBg = getHeatmapColor(occupancyCount);
   const dayNum = date.getDate();
 
@@ -72,8 +69,8 @@ export const DayCell: React.FC<DayCellProps> = ({
         </div>
       )}
 
-      {/* Booking dots — admin only */}
-      {isCurrentMonth && dotCount > 0 && !isGuest && (
+      {/* Booking dots */}
+      {isCurrentMonth && dotCount > 0 && (
         <div className="dots">
           {Array.from({ length: dotCount }).map((_, i) => (
             <span key={i} className={`dot dot-${activeBookings[i]?.status ?? 'confirmed'}`} />
@@ -81,12 +78,9 @@ export const DayCell: React.FC<DayCellProps> = ({
         </div>
       )}
 
-      {/* Badge: admin shows X/10, guest shows X left */}
-      {isCurrentMonth && occupancyCount > 0 && (
-        <span className={`occ-badge${isGuest ? ' occ-badge--guest' : ''}`}>
-          {isGuest ? `${roomsLeft} left` : `${occupancyCount}/10`}
+        <span className="occ-badge">
+          {occupancyCount}/10
         </span>
-      )}
     </div>
   );
 };
