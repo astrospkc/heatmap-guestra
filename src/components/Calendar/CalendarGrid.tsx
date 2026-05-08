@@ -37,12 +37,13 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({
 
   const days = getCalendarDays(year, month);
 
-  // ─── Navigation ────────────────────────────────────────────────────────────
+  // month - when its the first month of the year i.e. 0, then it should go to the previous year and 11th month
   const goToPrev = () => {
     if (month === 0) onMonthChange(year - 1, 11);
     else onMonthChange(year, month - 1);
   };
 
+  // month - when its the last month of the year i.e. 11, then it should go to the next year and 0 month
   const goToNext = () => {
     if (month === 11) onMonthChange(year + 1, 0);
     else onMonthChange(year, month + 1);

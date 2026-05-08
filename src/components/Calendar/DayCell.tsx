@@ -1,5 +1,5 @@
 import React from 'react';
-import type { Booking } from '../../types';
+import type { Booking, Role } from '../../types';
 import {
   getHeatmapColor,
   bookingOccupiesNight,
@@ -15,6 +15,7 @@ interface DayCellProps {
   isSelected: boolean;
   isDragStart: boolean;
   isToday: boolean;
+  role: Role;
   onMouseDown: (date: Date) => void;
   onMouseEnter: (date: Date) => void;
   onMouseUp: () => void;
@@ -29,17 +30,20 @@ export const DayCell: React.FC<DayCellProps> = ({
   isSelected,
   isDragStart,
   isToday,
+  role,
   onMouseDown,
   onMouseEnter,
   onMouseUp,
   onHover,
 }) => {
+  const isGuest = role === 'guest';
   const heatBg = getHeatmapColor(occupancyCount);
   const dayNum = date.getDate();
 
   // Bookings active on this specific night (for dot indicators)
   const activeBookings = bookings.filter((b) => bookingOccupiesNight(b, date));
   const dotCount = Math.min(activeBookings.length, 5);
+  const roomsLeft = 10 - occupancyCount;
 
   const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
     onMouseEnter(date);
@@ -68,8 +72,8 @@ export const DayCell: React.FC<DayCellProps> = ({
         </div>
       )}
 
-      {/* Booking dots */}
-      {isCurrentMonth && dotCount > 0 && (
+      {/* Booking dots — admin only */}
+      {isCurrentMonth && dotCount > 0 && !isGuest && (
         <div className="dots">
           {Array.from({ length: dotCount }).map((_, i) => (
             <span key={i} className={`dot dot-${activeBookings[i]?.status ?? 'confirmed'}`} />
@@ -77,9 +81,11 @@ export const DayCell: React.FC<DayCellProps> = ({
         </div>
       )}
 
-      {/* Occupancy count badge */}
+      {/* Badge: admin shows X/10, guest shows X left */}
       {isCurrentMonth && occupancyCount > 0 && (
-        <span className="occ-badge">{occupancyCount}/10</span>
+        <span className={`occ-badge${isGuest ? ' occ-badge--guest' : ''}`}>
+          {isGuest ? `${roomsLeft} left` : `${occupancyCount}/10`}
+        </span>
       )}
     </div>
   );

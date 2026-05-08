@@ -4,7 +4,9 @@ import type { Booking, CalendarDay } from '../types';
 
 /** Strip time component — compare dates by calendar day only */
 export function toDay(date: Date): Date {
-  return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  // const d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  // console.log("d: ", d)
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate());;
 }
 
 /** Parse a YYYY-MM-DD string as a local date (no timezone shift) */
@@ -27,6 +29,8 @@ export function formatDisplay(date: Date): string {
 }
 
 /** Number of nights between checkIn and checkOut */
+// 1 day = 24hrs * 60 min * 60 sec * 1000 ms 
+// 5-8 = 3 nights (5,6,7 are occupied, 8th is checkout day i.e. free) 
 export function nightsBetween(checkIn: string, checkOut: string): number {
   const a = parseDate(checkIn);
   const b = parseDate(checkOut);
@@ -176,18 +180,18 @@ export function getMonthStats(bookings: Booking[], year: number, month: number):
 /** Returns a CSS background color based on occupancy count out of 10 */
 export function getHeatmapColor(count: number): string {
   if (count === 0) return 'rgba(255,255,255,0.04)';
-  if (count <= 2)  return 'rgba(139, 92, 246, 0.25)';  // soft lavender
-  if (count <= 4)  return 'rgba(124, 58, 237, 0.45)';  // medium purple
-  if (count <= 6)  return 'rgba(251, 146, 60, 0.50)';  // warm amber
-  if (count <= 8)  return 'rgba(249, 115, 22, 0.65)';  // orange
+  if (count <= 2) return 'rgba(139, 92, 246, 0.25)';  // soft lavender
+  if (count <= 4) return 'rgba(124, 58, 237, 0.45)';  // medium purple
+  if (count <= 6) return 'rgba(251, 146, 60, 0.50)';  // warm amber
+  if (count <= 8) return 'rgba(249, 115, 22, 0.65)';  // orange
   return 'rgba(239, 68, 68, 0.75)';                     // full red — almost full
 }
 
 /** Text label for heatmap count */
 export function getHeatmapLabel(count: number): string {
   if (count === 0) return 'Available';
-  if (count <= 3)  return 'Low';
-  if (count <= 6)  return 'Moderate';
-  if (count <= 8)  return 'High';
+  if (count <= 3) return 'Low';
+  if (count <= 6) return 'Moderate';
+  if (count <= 8) return 'High';
   return 'Full';
 }

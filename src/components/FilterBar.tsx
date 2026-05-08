@@ -27,7 +27,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({ filters, onChange }) => {
     filters.roomType !== 'All' || filters.status !== 'All' || filters.source !== 'All';
 
   return (
-    <div className="filter-bar">
+    <div className=" bg-black filter-bar">
       <div className="filter-label">Filters</div>
 
       <select
@@ -36,27 +36,27 @@ export const FilterBar: React.FC<FilterBarProps> = ({ filters, onChange }) => {
         onChange={(e) => update('roomType', e.target.value)}
       >
         {ROOM_TYPES.map((t) => (
-          <option key={t} value={t}>{t === 'All' ? 'All Types' : t}</option>
+          <option className='bg-black' key={t} value={t}>{t === 'All' ? 'All Types' : t}</option>
         ))}
       </select>
 
       <select
-        className="filter-select"
+        className=" filter-select"
         value={filters.status}
         onChange={(e) => update('status', e.target.value)}
       >
         {STATUSES.map((s) => (
-          <option key={s} value={s}>{STATUS_DISPLAY[s]}</option>
+          <option className='bg-black' key={s} value={s}>{STATUS_DISPLAY[s]}</option>
         ))}
       </select>
 
       <select
-        className="filter-select"
+        className=" filter-select"
         value={filters.source}
         onChange={(e) => update('source', e.target.value)}
       >
         {SOURCES.map((s) => (
-          <option key={s} value={s}>{s === 'All' ? 'All Sources' : s}</option>
+          <option className='bg-black' key={s} value={s}>{s === 'All' ? 'All Sources' : s}</option>
         ))}
       </select>
 
