@@ -1,75 +1,68 @@
-# React + TypeScript + Vite
+# Guestra: Hotel Occupancy Dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Guestra is a React-based single-page hotel heatmap calendar application. It provides actionable insights into booking data, visualizes hotel occupancy using a dynamic heatmap, and allows users to explore availability and booking details through an intuitive drag-to-select interface.
 
-Currently, two official plugins are available:
+## Project Structure
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+The codebase is organized in `src/` as follows:
 
-## React Compiler
+*   **`App.tsx`**: The main entry point that ties the application together. It manages global state (selected dates, filters, tooltips) and handles the layout for the top navigation, calendar, and sidebar.
+*   **`components/Calendar/`**:
+    *   **`CalendarGrid.tsx`**: The core component that renders the 6-week calendar grid, manages the mouse drag selection state, and processes day-level events.
+    *   **`DayCell.tsx`**: Renders an individual day block, including the heatmap background color, occupancy progress bar, active booking dots, and forwards mouse events for the drag feature.
+    *   **`CalendarHeader.tsx`**: Provides controls for navigating between months and returning to "Today".
+*   **`components/Sidebar/`**:
+    *   **`StatsStrip.tsx`**: Displays monthly key performance indicators (Revenue, Avg. Occupancy, etc.).
+    *   **`BookingPanel.tsx`**: Shows detailed booking and availability information for a selected date range.
+*   **`components/FilterBar.tsx`**: Provides dropdowns to filter bookings by room type, status, and booking source.
+*   **`components/Tooltip.tsx`**: A floating tooltip that displays occupancy details when hovering over a specific day.
+*   **`utils/dateUtils.ts`**: A robust suite of pure utility functions. It contains all the math for date manipulation, calendar generation, overlap detection, occupancy calculation, and statistical aggregation.
+*   **`hooks/useBookings.ts`**: A custom hook responsible for fetching and managing the `bookings.json` data.
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+## Calendar Grid and Calendar Days Logic
 
-Note: This will impact Vite dev & build performances.
+The calendar is designed to provide a consistent, non-jumping UI by always rendering a complete 6-week grid (exactly 42 cells). This logic is driven by the `getCalendarDays` function in `dateUtils.ts`:
 
-## Expanding the ESLint configuration
+1.  **Start of Month Calculation**: The logic determines the first day of the target month and finds its corresponding weekday index (where Sunday = 0).
+2.  **Previous Month Padding**: Based on the weekday index, it calculates how many days from the end of the previous month are needed to fill the first row up to the 1st of the current month.
+3.  **Current Month Generation**: It iterates from the 1st to the last day of the current month, adding them to the grid.
+4.  **Next Month Padding**: Finally, it calculates the remaining empty slots `(42 - current_total_cells)` and fills them with the starting days of the next month.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+The grid uses "Nights" logic for hotel stays: a booking occupies the nights from `checkIn` up to (but not including) `checkOut`. The `checkOut` day is considered free for a new guest to check in.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Mouse Drag Feature
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+The application features a custom, native-event-driven drag-to-select functionality built into `CalendarGrid.tsx`, avoiding the need for heavy external drag-and-drop libraries.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+The drag selection lifecycle:
+1.  **`onMouseDown`**: When a user clicks a `DayCell`, the grid records that date as both `dragStart` and `dragEnd`, sets an `isDragging` flag, and temporarily clears any previously finalized selection.
+2.  **`onMouseEnter`**: As the user drags the mouse across other `DayCell` components, the grid detects these hover events. If `isDragging` is true, it continuously updates the `dragEnd` date, allowing the UI to instantly recalculate and highlight the current selection range.
+3.  **`onMouseUp`**: Releasing the mouse button triggers the end of the drag. The logic normalizes the start and end dates (ensuring the start date is always chronologically before or equal to the end date, regardless of whether the user dragged left-to-right or right-to-left). A finalized `SelectionRange` is created and propagated to the rest of the application via `onSelectionChange`.
+4.  **Global Fallback**: A `mouseup` event listener is attached to the global `document`. This ensures that if a user starts dragging inside the calendar but releases the mouse button outside of it, the drag operation is still properly terminated and finalized.
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Getting Started
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Prerequisites
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+Ensure you have [Node.js](https://nodejs.org/) installed on your machine.
+
+### Installation
+
+1.  Clone the repository or download the source code.
+2.  Navigate to the project directory:
+    ```bash
+    cd guestra
+    ```
+3.  Install dependencies:
+    ```bash
+    npm install
+    ```
+
+### Available Scripts
+
+In the project directory, you can run:
+
+*   **`npm run dev`**: Runs the app in development mode. Open [http://localhost:5173](http://localhost:5173) to view it in the browser.
+*   **`npm run build`**: Builds the app for production to the `dist` folder.
+*   **`npm run preview`**: Locally preview the production build.
+*   **`npm run lint`**: Runs ESLint to check for code quality and style issues.
